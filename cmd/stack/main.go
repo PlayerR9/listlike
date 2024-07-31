@@ -60,24 +60,90 @@ import (
 	"flag"
 	"log"
 	"strings"
-	"text/template"
 
 	uc "github.com/PlayerR9/lib_units/common"
 	ggen "github.com/PlayerR9/lib_units/generator"
 )
 
+type GenData struct {
+	PackageName  string
+	Dependencies []string
+	StringFunc   string
+
+	TypeName   string
+	TypeSig    string
+	HelperSig  string
+	HelperName string
+	Generics   string
+	DataType   string
+	ZeroValue  string
+}
+
+func (g *GenData) SetPackageName(name string) {
+	g.PackageName = name
+}
+
 var (
 	// Logger is the logger to use.
 	Logger *log.Logger
 
-	// t is the template to use.
-	t *template.Template
+	// generator is the code generator.
+	generator *ggen.CodeGenerator[*GenData]
 )
 
 func init() {
-	Logger = ggen.InitLogger("stack")
+	Logger = ggen.InitLogger("linked stack")
 
-	t = template.Must(template.New("").Parse(templ))
+	tmp, err := ggen.NewCodeGeneratorFromTemplate[*GenData]("", templ)
+	if err != nil {
+		Logger.Fatalf("Could not initialize generator: %s", err.Error())
+	}
+
+	tmp.AddDoFunc(func(t *GenData) error {
+		sig, err := ggen.MakeTypeSig(t.TypeName, "")
+		if err != nil {
+			return err
+		}
+
+		t.TypeSig = sig
+
+		return nil
+	})
+
+	tmp.AddDoFunc(func(gd *GenData) error {
+		data_type := strings.TrimPrefix(gd.DataType, "*")
+
+		sig, err := ggen.MakeTypeSig("stack_node_", data_type)
+		if err != nil {
+			return err
+		}
+
+		gd.HelperSig = sig
+
+		return nil
+	})
+
+	tmp.AddDoFunc(func(gd *GenData) error {
+		data_type := strings.TrimPrefix(gd.DataType, "*")
+
+		gd.HelperName = "stack_node_" + data_type
+
+		return nil
+	})
+
+	tmp.AddDoFunc(func(gd *GenData) error {
+		f_call, deps := ggen.GetStringFunctionCall("node.value", gd.DataType, nil)
+
+		gd.StringFunc = f_call
+
+		deps = append(deps, "strconv", "strings", "github.com/PlayerR9/lib_units/common")
+
+		gd.Dependencies = ggen.GetPackages(deps)
+
+		return nil
+	})
+
+	generator = tmp
 }
 
 var (
@@ -86,29 +152,12 @@ var (
 )
 
 func init() {
-	ggen.SetOutputFlag("<type>_stack.go", false)
+	ggen.SetOutputFlag("<type>__linkedstack.go", false)
 	ggen.SetTypeListFlag("type", true, 1, "The data type of the linked stack.")
 	ggen.SetGenericsSignFlag("g", false, 1)
 
 	TypeName = flag.String("name", "", "the name of the linked stack. Must be a valid Go identifier. If not set, "+
 		"the default name of 'Linked<DataType>Stack' will be used instead.")
-}
-
-type GenData struct {
-	TypeName    string
-	TypeSig     string
-	HelperSig   string
-	HelperName  string
-	Generics    string
-	DataType    string
-	PackageName string
-	ZeroValue   string
-}
-
-func (g GenData) SetPackageName(name string) ggen.Generater {
-	g.PackageName = name
-
-	return g
 }
 
 func main() {
@@ -127,50 +176,19 @@ func main() {
 		Logger.Fatalf("Could not fix type name: %s", err.Error())
 	}
 
-	output_loc, err := ggen.FixOutputLoc(strings.ToLower(type_name), "_stack.go")
-	if err != nil {
-		Logger.Fatalf("Could not fix import dir: %s", err.Error())
-	}
-
-	Logger.Printf("Type name: %s", type_name)
-
-	err = ggen.Generate(output_loc, GenData{
+	g := &GenData{
 		DataType:  data_type,
 		TypeName:  type_name,
 		Generics:  ggen.GenericsSigFlag.String(),
-		ZeroValue: ggen.ZeroValueOf(data_type),
-	}, t, func(t *GenData) error {
-		sig, err := ggen.MakeTypeSig(type_name, "")
-		if err != nil {
-			return err
-		}
+		ZeroValue: ggen.ZeroValueOf(data_type, nil),
+	}
 
-		t.TypeSig = sig
-
-		return nil
-	}, func(t *GenData) error {
-		data_type := strings.TrimPrefix(data_type, "*")
-
-		sig, err := ggen.MakeTypeSig("stack_node_", data_type)
-		if err != nil {
-			return err
-		}
-
-		t.HelperSig = sig
-
-		return nil
-	}, func(t *GenData) error {
-		data_type := strings.TrimPrefix(data_type, "*")
-
-		t.HelperName = "stack_node_" + data_type
-
-		return nil
-	})
+	err = generator.Generate(type_name, "_linkedstack.go", g)
 	if err != nil {
 		Logger.Fatalf("Could not generate code: %s", err.Error())
 	}
 
-	Logger.Printf("Generated %s", output_loc)
+	Logger.Printf("Successfully generated: %q", type_name+"_linkedstack.go")
 }
 
 func FixTypeName(data_type string) (string, error) {
@@ -198,10 +216,9 @@ const templ = `// Code generated with go generate. DO NOT EDIT.
 package {{ .PackageName }}
 
 import (
-	"strconv"
-	"strings"
-
-	"github.com/PlayerR9/lib_units/common"
+	{{ range $index, $dep := .Dependencies }}
+	"{{ $dep }}"
+	{{- end }}
 )
 
 // {{ .HelperName }} is a node in the linked stack.
@@ -345,7 +362,7 @@ func (s *{{ .TypeSig }}) Clear() {
 func (s *{{ .TypeSig }}) GoString() string {
 	values := make([]string, 0, s.size)
 	for node := s.front; node != nil; node = node.next {
-		values = append(values, common.StringOf(node.value))
+		values = append(values, {{ .StringFunc }}
 	}
 
 	var builder strings.Builder

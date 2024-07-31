@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	uc "github.com/PlayerR9/lib_units/common"
+	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // LinkedList is a generic type that represents a list data structure with
@@ -194,7 +195,7 @@ func (list *LinkedList[T]) IsFull() bool {
 func (list *LinkedList[T]) GoString() string {
 	values := make([]string, 0, list.size)
 	for list_node := list.front; list_node != nil; list_node = list_node.Next() {
-		values = append(values, uc.StringOf(list_node.Value))
+		values = append(values, lustr.GoStringOf(list_node.Value))
 	}
 
 	var builder strings.Builder

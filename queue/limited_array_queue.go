@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	uc "github.com/PlayerR9/lib_units/common"
+	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // LimitedArrayQueue is a generic type that represents a queue data structure with
@@ -98,7 +99,7 @@ func (queue *LimitedArrayQueue[T]) IsFull() bool {
 func (queue *LimitedArrayQueue[T]) GoString() string {
 	values := make([]string, 0, len(queue.values))
 	for _, value := range queue.values {
-		values = append(values, uc.StringOf(value))
+		values = append(values, lustr.GoStringOf(value))
 	}
 
 	var builder strings.Builder

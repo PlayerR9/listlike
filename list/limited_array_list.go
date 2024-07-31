@@ -1,6 +1,7 @@
 package list
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -136,7 +137,7 @@ func (list *LimitedArrayList[T]) IsFull() bool {
 func (list *LimitedArrayList[T]) GoString() string {
 	values := make([]string, 0, len(list.values))
 	for _, v := range list.values {
-		values = append(values, uc.StringOf(v))
+		values = append(values, fmt.Sprintf("%v", v))
 	}
 
 	var builder strings.Builder

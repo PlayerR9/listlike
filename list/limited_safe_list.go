@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	uc "github.com/PlayerR9/lib_units/common"
+	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // LimitedSafeList is a generic type that represents a thread-safe list data
@@ -249,7 +250,7 @@ func (list *LimitedSafeList[T]) GoString() string {
 
 	values := make([]string, 0, list.size)
 	for node := list.front; node != nil; node = node.Next() {
-		values = append(values, uc.StringOf(node.Value))
+		values = append(values, lustr.GoStringOf(node.Value))
 	}
 
 	var builder strings.Builder

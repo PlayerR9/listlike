@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	uc "github.com/PlayerR9/lib_units/common"
+	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // ArrayStack is a generic type that represents a stack data structure with
@@ -122,7 +123,7 @@ func (stack *ArrayStack[T]) Clear() {
 func (stack *ArrayStack[T]) GoString() string {
 	values := make([]string, 0, len(stack.values))
 	for _, value := range stack.values {
-		values = append(values, uc.StringOf(value))
+		values = append(values, lustr.GoStringOf(value))
 	}
 
 	var builder strings.Builder

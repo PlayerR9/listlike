@@ -1,6 +1,7 @@
 package list
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -123,7 +124,7 @@ func (list *ArrayList[T]) IsFull() (isFull bool) {
 func (list *ArrayList[T]) GoString() string {
 	values := make([]string, 0, len(list.values))
 	for _, element := range list.values {
-		values = append(values, uc.StringOf(element))
+		values = append(values, fmt.Sprintf("%v", element))
 	}
 
 	var builder strings.Builder

@@ -1,6 +1,7 @@
 package list
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -201,7 +202,7 @@ func (list *LimitedLinkedList[T]) GoString() string {
 	values := make([]string, 0, list.size)
 
 	for list_node := list.front; list_node != nil; list_node = list_node.Next() {
-		values = append(values, uc.StringOf(list_node.Value))
+		values = append(values, fmt.Sprintf("%v", list_node.Value))
 	}
 
 	var builder strings.Builder

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	uc "github.com/PlayerR9/lib_units/common"
+	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // LinkedQueue is a generic type that represents a queue data structure with
@@ -133,7 +134,7 @@ func (queue *LinkedQueue[T]) Clear() {
 func (queue *LinkedQueue[T]) GoString() string {
 	values := make([]string, 0, queue.size)
 	for queue_node := queue.front; queue_node != nil; queue_node = queue_node.next {
-		values = append(values, uc.StringOf(queue_node.value))
+		values = append(values, lustr.GoStringOf(queue_node.value))
 	}
 
 	var builder strings.Builder

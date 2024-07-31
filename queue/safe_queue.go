@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	uc "github.com/PlayerR9/lib_units/common"
+	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // SafeQueue is a generic type that represents a thread-safe queue data
@@ -164,7 +165,7 @@ func (queue *SafeQueue[T]) GoString() string {
 
 	values := make([]string, 0, size)
 	for node := queue.front; node != nil; node = node.next {
-		values = append(values, uc.StringOf(node.value))
+		values = append(values, lustr.GoStringOf(node.value))
 	}
 
 	var builder strings.Builder

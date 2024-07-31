@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	uc "github.com/PlayerR9/lib_units/common"
+	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // LimitedLinkedStack is a generic type that represents a stack data structure with
@@ -193,7 +194,7 @@ func (stack *LimitedLinkedStack[T]) IsFull() bool {
 func (stack *LimitedLinkedStack[T]) GoString() string {
 	values := make([]string, 0, stack.size)
 	for stack_node := stack.front; stack_node != nil; stack_node = stack_node.Next() {
-		values = append(values, uc.StringOf(stack_node.Value))
+		values = append(values, lustr.GoStringOf(stack_node.Value))
 	}
 
 	var builder strings.Builder
