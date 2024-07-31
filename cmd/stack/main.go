@@ -183,12 +183,12 @@ func main() {
 		ZeroValue: ggen.ZeroValueOf(data_type, nil),
 	}
 
-	err = generator.Generate(type_name, "_linkedstack.go", g)
+	dest, err := generator.Generate(type_name, "_linkedstack.go", g)
 	if err != nil {
 		Logger.Fatalf("Could not generate code: %s", err.Error())
 	}
 
-	Logger.Printf("Successfully generated: %q", type_name+"_linkedstack.go")
+	Logger.Printf("Successfully generated: %q", dest)
 }
 
 func FixTypeName(data_type string) (string, error) {
@@ -362,7 +362,7 @@ func (s *{{ .TypeSig }}) Clear() {
 func (s *{{ .TypeSig }}) GoString() string {
 	values := make([]string, 0, s.size)
 	for node := s.front; node != nil; node = node.next {
-		values = append(values, {{ .StringFunc }}
+		values = append(values, {{ .StringFunc }})
 	}
 
 	var builder strings.Builder
