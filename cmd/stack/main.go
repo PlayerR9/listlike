@@ -215,8 +215,7 @@ func FixTypeName(data_type string) (string, error) {
 const templ = `// Code generated with go generate. DO NOT EDIT.
 package {{ .PackageName }}
 
-import (
-	{{ range $index, $dep := .Dependencies }}
+import ({{ range $index, $dep := .Dependencies }}
 	"{{ $dep }}"
 	{{- end }}
 )
