@@ -80,7 +80,6 @@ type Queuer[T any] interface {
 
 	uc.Iterable[T]
 
-	uc.Copier
 	fmt.GoStringer
 }
 

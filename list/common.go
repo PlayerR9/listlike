@@ -97,7 +97,6 @@ type Lister[T any] interface {
 
 	uc.Iterable[T]
 
-	uc.Copier
 	fmt.GoStringer
 }
 

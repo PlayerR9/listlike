@@ -103,16 +103,6 @@ func (queue *ArrayQueue[T]) Slice() []T {
 	return slice
 }
 
-// Copy implements the Queuer interface.
-func (queue *ArrayQueue[T]) Copy() uc.Copier {
-	queueCopy := &ArrayQueue[T]{
-		values: make([]T, len(queue.values)),
-	}
-	copy(queueCopy.values, queue.values)
-
-	return queueCopy
-}
-
 // Capacity implements the Queuer interface.
 func (queue *ArrayQueue[T]) Capacity() int {
 	return -1
@@ -132,4 +122,18 @@ func NewArrayQueue[T any]() *ArrayQueue[T] {
 	return &ArrayQueue[T]{
 		values: make([]T, 0),
 	}
+}
+
+// Copy is a method of the ArrayQueue type. It is used to create a shallow copy
+// of the queue.
+//
+// Returns:
+//   - *ArrayQueue[T]: A shallow copy of the queue.
+func (queue *ArrayQueue[T]) Copy() *ArrayQueue[T] {
+	queue_copy := &ArrayQueue[T]{
+		values: make([]T, len(queue.values)),
+	}
+	copy(queue_copy.values, queue.values)
+
+	return queue_copy
 }

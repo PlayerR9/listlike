@@ -281,22 +281,21 @@ func (list *LinkedList[T]) Slice() []T {
 // of the list.
 //
 // Returns:
-//
-//   - uc.Copier: A copy of the list.
-func (list *LinkedList[T]) Copy() uc.Copier {
-	listCopy := &LinkedList[T]{
+//   - *LinkedList[T]: A copy of the list.
+func (list *LinkedList[T]) Copy() *LinkedList[T] {
+	list_copy := &LinkedList[T]{
 		size: list.size,
 	}
 
 	if list.front == nil {
-		return listCopy
+		return list_copy
 	}
 
 	// First node
 	node := NewListNode(list.front.Value)
-	listCopy.front = node
+	list_copy.front = node
 
-	prev := listCopy.front
+	prev := list_copy.front
 
 	// Subsequent nodes
 	for list_node := list.front.Next(); list_node != nil; list_node = list_node.Next() {
@@ -307,11 +306,11 @@ func (list *LinkedList[T]) Copy() uc.Copier {
 		prev = list_node_copy
 	}
 
-	if listCopy.front.Next() != nil {
-		listCopy.front.Next().SetPrev(listCopy.front)
+	if list_copy.front.Next() != nil {
+		list_copy.front.Next().SetPrev(list_copy.front)
 	}
 
-	listCopy.back = prev
+	list_copy.back = prev
 
-	return listCopy
+	return list_copy
 }

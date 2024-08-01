@@ -201,14 +201,13 @@ func (list *LimitedArrayList[T]) Slice() []T {
 // of the list.
 //
 // Returns:
-//
-//   - uc.Copier: A copy of the list.
-func (list *LimitedArrayList[T]) Copy() uc.Copier {
-	listCopy := &LimitedArrayList[T]{
+//   - *LimitedArrayList[T]: A copy of the list.
+func (list *LimitedArrayList[T]) Copy() *LimitedArrayList[T] {
+	list_copy := &LimitedArrayList[T]{
 		values:   make([]T, len(list.values)),
 		capacity: list.capacity,
 	}
-	copy(listCopy.values, list.values)
+	copy(list_copy.values, list.values)
 
-	return listCopy
+	return list_copy
 }

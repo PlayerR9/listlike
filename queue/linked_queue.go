@@ -159,37 +159,6 @@ func (queue *LinkedQueue[T]) Slice() []T {
 	return slice
 }
 
-// Copy implements the Queuer interface.
-func (queue *LinkedQueue[T]) Copy() uc.Copier {
-	queueCopy := &LinkedQueue[T]{
-		size: queue.size,
-	}
-
-	if queue.size == 0 {
-		return queueCopy
-	}
-
-	// First node
-	node := &queue_node[T]{
-		value: queue.front.value,
-	}
-
-	queueCopy.front = node
-	queueCopy.back = node
-
-	// Subsequent nodes
-	for n := queue.front.next; n != nil; n = n.next {
-		node := &queue_node[T]{
-			value: n.value,
-		}
-
-		queueCopy.back.next = node
-		queueCopy.back = node
-	}
-
-	return queueCopy
-}
-
 // Capacity implements the Queuer interface.
 //
 // Always returns -1.
@@ -213,4 +182,38 @@ func NewLinkedQueue[T any]() *LinkedQueue[T] {
 	return &LinkedQueue[T]{
 		size: 0,
 	}
+}
+
+// Copy is a method that returns a copy of the LinkedQueue.
+//
+// Returns:
+//   - *LinkedQueue[T]: A copy of the LinkedQueue.
+func (queue *LinkedQueue[T]) Copy() *LinkedQueue[T] {
+	queue_copy := &LinkedQueue[T]{
+		size: queue.size,
+	}
+
+	if queue.size == 0 {
+		return queue_copy
+	}
+
+	// First node
+	node := &queue_node[T]{
+		value: queue.front.value,
+	}
+
+	queue_copy.front = node
+	queue_copy.back = node
+
+	// Subsequent nodes
+	for n := queue.front.next; n != nil; n = n.next {
+		node := &queue_node[T]{
+			value: n.value,
+		}
+
+		queue_copy.back.next = node
+		queue_copy.back = node
+	}
+
+	return queue_copy
 }

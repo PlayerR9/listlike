@@ -230,43 +230,6 @@ func (queue *LimitedSafeQueue[T]) Slice() []T {
 	return slice
 }
 
-// Copy implements the Queuer interface.
-func (queue *LimitedSafeQueue[T]) Copy() uc.Copier {
-	queue.frontMutex.RLock()
-	defer queue.frontMutex.RUnlock()
-
-	queue.backMutex.RLock()
-	defer queue.backMutex.RUnlock()
-
-	queueCopy := &LimitedSafeQueue[T]{
-		size: queue.size,
-	}
-
-	if queue.front == nil {
-		return queueCopy
-	}
-
-	// First node
-	node := &queue_safe_node[T]{
-		value: queue.front.value,
-	}
-
-	queueCopy.front = node
-	queueCopy.back = node
-
-	// Subsequent nodes
-	for qNode := queue.front.next; qNode != nil; qNode = qNode.next {
-		node := &queue_safe_node[T]{
-			value: qNode.value,
-		}
-
-		queueCopy.back.next = node
-		queueCopy.back = node
-	}
-
-	return queueCopy
-}
-
 // NewLimitedSafeQueue is a function that creates and returns a new instance of a
 // LimitedSafeQueue.
 //
@@ -283,4 +246,45 @@ func NewLimitedSafeQueue[T any](capacity int) (*LimitedSafeQueue[T], error) {
 	return &LimitedSafeQueue[T]{
 		capacity: capacity,
 	}, nil
+}
+
+// Copy is a method of the LimitedSafeQueue type. It is used to create a shallow
+// copy of the queue.
+//
+// Returns:
+//   - *LimitedSafeQueue[T]: A shallow copy of the queue.
+func (queue *LimitedSafeQueue[T]) Copy() *LimitedSafeQueue[T] {
+	queue.frontMutex.RLock()
+	defer queue.frontMutex.RUnlock()
+
+	queue.backMutex.RLock()
+	defer queue.backMutex.RUnlock()
+
+	queue_copy := &LimitedSafeQueue[T]{
+		size: queue.size,
+	}
+
+	if queue.front == nil {
+		return queue_copy
+	}
+
+	// First node
+	node := &queue_safe_node[T]{
+		value: queue.front.value,
+	}
+
+	queue_copy.front = node
+	queue_copy.back = node
+
+	// Subsequent nodes
+	for qNode := queue.front.next; qNode != nil; qNode = qNode.next {
+		node := &queue_safe_node[T]{
+			value: qNode.value,
+		}
+
+		queue_copy.back.next = node
+		queue_copy.back = node
+	}
+
+	return queue_copy
 }

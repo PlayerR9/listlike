@@ -123,17 +123,6 @@ func (queue *LimitedArrayQueue[T]) Slice() []T {
 	return slice
 }
 
-// Copy implements the Queuer interface.
-func (queue *LimitedArrayQueue[T]) Copy() uc.Copier {
-	queueCopy := &LimitedArrayQueue[T]{
-		values:   make([]T, len(queue.values)),
-		capacity: queue.capacity,
-	}
-	copy(queueCopy.values, queue.values)
-
-	return queueCopy
-}
-
 // NewLimitedArrayQueue is a function that creates and returns a new instance of a
 // LimitedArrayQueue.
 //
@@ -152,4 +141,19 @@ func NewLimitedArrayQueue[T any](capacity int) (*LimitedArrayQueue[T], error) {
 	return &LimitedArrayQueue[T]{
 		values: make([]T, 0, capacity),
 	}, nil
+}
+
+// Copy is a method of the LimitedArrayQueue type. It is used to create a shallow
+// copy of the queue.
+//
+// Returns:
+//   - *LimitedArrayQueue[T]: A shallow copy of the queue.
+func (queue *LimitedArrayQueue[T]) Copy() *LimitedArrayQueue[T] {
+	queue_copy := &LimitedArrayQueue[T]{
+		values:   make([]T, len(queue.values)),
+		capacity: queue.capacity,
+	}
+	copy(queue_copy.values, queue.values)
+
+	return queue_copy
 }

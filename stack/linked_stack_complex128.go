@@ -2,7 +2,6 @@
 package stack
 
 import (
-	
 	"github.com/PlayerR9/lib_units/common"
 	"strconv"
 	"strings"
@@ -176,10 +175,25 @@ func (s *Complex128Stack) Slice() []complex128 {
 	return slice
 }
 
-// Copy implements the stack.Stacker interface.
+// Capacity implements the stack.Stacker interface.
 //
-// The copy is a shallow copy.
-func (s *Complex128Stack) Copy() common.Copier {
+// Always returns -1.
+func (s *Complex128Stack) Capacity() int {
+	return -1
+}
+
+// IsFull implements the stack.Stacker interface.
+//
+// Always returns false.
+func (s *Complex128Stack) IsFull() bool {
+	return false
+}
+
+// Copy is a method that returns a deep copy of the stack.
+//
+// Returns:
+//   - *Complex128Stack: A pointer to the newly created stack. Never returns nil.
+func (s *Complex128Stack) Copy() *Complex128Stack {
 	if s.front == nil {
 		return &Complex128Stack{}
 	}
@@ -207,18 +221,4 @@ func (s *Complex128Stack) Copy() common.Copier {
 	}
 
 	return s_copy
-}
-
-// Capacity implements the stack.Stacker interface.
-//
-// Always returns -1.
-func (s *Complex128Stack) Capacity() int {
-	return -1
-}
-
-// IsFull implements the stack.Stacker interface.
-//
-// Always returns false.
-func (s *Complex128Stack) IsFull() bool {
-	return false
 }

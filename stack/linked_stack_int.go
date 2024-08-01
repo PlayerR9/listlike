@@ -2,7 +2,6 @@
 package stack
 
 import (
-	
 	"github.com/PlayerR9/lib_units/common"
 	"strconv"
 	"strings"
@@ -176,10 +175,25 @@ func (s *IntStack) Slice() []int {
 	return slice
 }
 
-// Copy implements the stack.Stacker interface.
+// Capacity implements the stack.Stacker interface.
 //
-// The copy is a shallow copy.
-func (s *IntStack) Copy() common.Copier {
+// Always returns -1.
+func (s *IntStack) Capacity() int {
+	return -1
+}
+
+// IsFull implements the stack.Stacker interface.
+//
+// Always returns false.
+func (s *IntStack) IsFull() bool {
+	return false
+}
+
+// Copy is a method that returns a deep copy of the stack.
+//
+// Returns:
+//   - *IntStack: A pointer to the newly created stack. Never returns nil.
+func (s *IntStack) Copy() *IntStack {
 	if s.front == nil {
 		return &IntStack{}
 	}
@@ -207,18 +221,4 @@ func (s *IntStack) Copy() common.Copier {
 	}
 
 	return s_copy
-}
-
-// Capacity implements the stack.Stacker interface.
-//
-// Always returns -1.
-func (s *IntStack) Capacity() int {
-	return -1
-}
-
-// IsFull implements the stack.Stacker interface.
-//
-// Always returns false.
-func (s *IntStack) IsFull() bool {
-	return false
 }

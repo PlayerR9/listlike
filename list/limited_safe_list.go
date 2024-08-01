@@ -362,30 +362,29 @@ func (list *LimitedSafeList[T]) Slice() []T {
 // the list.
 //
 // Returns:
-//
-//   - uc.Copier: A copy of the list.
-func (list *LimitedSafeList[T]) Copy() uc.Copier {
+//   - *LimitedSafeList[T]: A copy of the list.
+func (list *LimitedSafeList[T]) Copy() *LimitedSafeList[T] {
 	list.frontMutex.RLock()
 	defer list.frontMutex.RUnlock()
 
 	list.backMutex.RLock()
 	defer list.backMutex.RUnlock()
 
-	listCopy := &LimitedSafeList[T]{
+	list_copy := &LimitedSafeList[T]{
 		size:     list.size,
 		capacity: list.capacity,
 	}
 
 	if list.front == nil {
-		return listCopy
+		return list_copy
 	}
 
 	// First node
 	node := NewListSafeNode(list.front.Value)
 
-	listCopy.front = node
+	list_copy.front = node
 
-	prev := listCopy.front
+	prev := list_copy.front
 
 	// Subsequent nodes
 	for node := list.front.Next(); node != nil; node = node.Next() {
@@ -396,11 +395,11 @@ func (list *LimitedSafeList[T]) Copy() uc.Copier {
 		prev = nodeCopy
 	}
 
-	if listCopy.front.Next() != nil {
-		listCopy.front.Next().SetPrev(listCopy.front)
+	if list_copy.front.Next() != nil {
+		list_copy.front.Next().SetPrev(list_copy.front)
 	}
 
-	listCopy.back = prev
+	list_copy.back = prev
 
-	return listCopy
+	return list_copy
 }

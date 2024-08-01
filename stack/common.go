@@ -2,8 +2,6 @@ package stack
 
 import (
 	"fmt"
-
-	uc "github.com/PlayerR9/lib_units/common"
 )
 
 // Stacker is an interface that defines methods for a stack data structure.
@@ -68,12 +66,15 @@ type Stacker[T any] interface {
 	// IsFull is a method that checks whether the list is full.
 	//
 	// Returns:
-	//
 	//   - bool: True if the list is full, false otherwise.
 	IsFull() bool
 
-	uc.Slicer[T]
-	uc.Copier
+	// Slice is a method that returns a slice of the values in the stack.
+	//
+	// Returns:
+	// 	- []T: A slice of the values in the stack.
+	Slice() []T
+
 	fmt.GoStringer
 }
 

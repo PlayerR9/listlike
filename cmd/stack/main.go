@@ -57,11 +57,13 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"log"
+	"os"
+	"path/filepath"
 	"strings"
 
-	uc "github.com/PlayerR9/lib_units/common"
 	ggen "github.com/PlayerR9/lib_units/generator"
 )
 
@@ -92,7 +94,7 @@ var (
 )
 
 func init() {
-	Logger = ggen.InitLogger("linked stack")
+	Logger = ggen.InitLogger(os.Stdout, "linked stack")
 
 	tmp, err := ggen.NewCodeGeneratorFromTemplate[*GenData]("", templ)
 	if err != nil {
@@ -166,7 +168,7 @@ func main() {
 		Logger.Fatalf("Invalid flags: %s", err.Error())
 	}
 
-	data_type, err := ggen.TypeListFlag.GetType(0)
+	data_type, err := ggen.TypeListFlag.Type(0)
 	if err != nil {
 		Logger.Fatalf("Could not get type: %s", err.Error())
 	}
@@ -188,11 +190,27 @@ func main() {
 		Logger.Fatalf("Could not generate code: %s", err.Error())
 	}
 
-	Logger.Printf("Successfully generated: %q", dest)
+	dir := filepath.Dir(dest.DestLoc)
+
+	err = os.MkdirAll(dir, 0755)
+	if err != nil {
+		Logger.Fatalf("Could not create directory: %s", err.Error())
+	}
+
+	err = os.WriteFile(dest.DestLoc, dest.Data, 0644)
+	if err != nil {
+		Logger.Fatalf("Could not write file: %s", err.Error())
+	}
+
+	Logger.Printf("Successfully generated: %q", dest.DestLoc)
 }
 
 func FixTypeName(data_type string) (string, error) {
-	type_name := uc.AssertDerefNil(TypeName, "TypeName")
+	if TypeName == nil {
+		return "", errors.New("the -name flag is required")
+	}
+
+	type_name := *TypeName
 	if type_name != "" {
 		err := ggen.IsValidName(type_name, nil, ggen.Exported)
 		if err != nil {
@@ -388,10 +406,25 @@ func (s *{{ .TypeSig }}) Slice() []{{ .DataType }} {
 	return slice
 }
 
-// Copy implements the stack.Stacker interface.
+// Capacity implements the stack.Stacker interface.
 //
-// The copy is a shallow copy.
-func (s *{{ .TypeSig }}) Copy() common.Copier {
+// Always returns -1.
+func (s *{{ .TypeSig }}) Capacity() int {
+	return -1
+}
+
+// IsFull implements the stack.Stacker interface.
+//
+// Always returns false.
+func (s *{{ .TypeSig }}) IsFull() bool {
+	return false
+}
+
+// Copy is a method that returns a deep copy of the stack.
+//
+// Returns:
+//   - *{{ .TypeSig }}: A pointer to the newly created stack. Never returns nil.
+func (s *{{ .TypeSig }}) Copy() *{{ .TypeSig }} {
 	if s.front == nil {
 		return &{{ .TypeSig }}{}
 	}
@@ -419,19 +452,4 @@ func (s *{{ .TypeSig }}) Copy() common.Copier {
 	}
 
 	return s_copy
-}
-
-// Capacity implements the stack.Stacker interface.
-//
-// Always returns -1.
-func (s *{{ .TypeSig }}) Capacity() int {
-	return -1
-}
-
-// IsFull implements the stack.Stacker interface.
-//
-// Always returns false.
-func (s *{{ .TypeSig }}) IsFull() bool {
-	return false
-}
-`
+}`

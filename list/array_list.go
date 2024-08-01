@@ -186,13 +186,12 @@ func (list *ArrayList[T]) Slice() []T {
 // of the list.
 //
 // Returns:
-//
-//   - uc.Copier: A copy of the list.
-func (list *ArrayList[T]) Copy() uc.Copier {
-	listCopy := &ArrayList[T]{
+//   - *ArrayList[T]: A shallow copy of the list.
+func (list *ArrayList[T]) Copy() *ArrayList[T] {
+	list_copy := &ArrayList[T]{
 		values: make([]T, len(list.values)),
 	}
-	copy(listCopy.values, list.values)
+	copy(list_copy.values, list.values)
 
-	return listCopy
+	return list_copy
 }

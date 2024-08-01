@@ -150,21 +150,6 @@ func (stack *ArrayStack[T]) Slice() []T {
 	return slice
 }
 
-// Copy is a method of the ArrayStack type. It is used to create a shaCommonow copy
-// of the stack.
-//
-// Returns:
-//
-//   - uc.Copier: A copy of the stack.
-func (stack *ArrayStack[T]) Copy() uc.Copier {
-	stackCopy := &ArrayStack[T]{
-		values: make([]T, len(stack.values)),
-	}
-	copy(stackCopy.values, stack.values)
-
-	return stackCopy
-}
-
 // Capacity is a method of the ArrayStack type. It is used to return the capacity of
 // the stack.
 //
@@ -180,4 +165,18 @@ func (stack *ArrayStack[T]) Capacity() int {
 //   - bool: false
 func (stack *ArrayStack[T]) IsFull() bool {
 	return false
+}
+
+// Copy is a method of the ArrayStack type. It is used to create a shaCommonow copy
+// of the stack.
+//
+// Returns:
+//   - uc.Copier: A copy of the stack.
+func (stack *ArrayStack[T]) Copy() *ArrayStack[T] {
+	stack_copy := &ArrayStack[T]{
+		values: make([]T, len(stack.values)),
+	}
+	copy(stack_copy.values, stack.values)
+
+	return stack_copy
 }

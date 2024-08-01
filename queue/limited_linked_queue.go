@@ -174,38 +174,6 @@ func (queue *LimitedLinkedQueue[T]) Slice() []T {
 	return slice
 }
 
-// Copy implements the Queuer interface.
-func (queue *LimitedLinkedQueue[T]) Copy() uc.Copier {
-	queueCopy := &LimitedLinkedQueue[T]{
-		size:     queue.size,
-		capacity: queue.capacity,
-	}
-
-	if queue.size == 0 {
-		return queueCopy
-	}
-
-	// First node
-	node := &queue_node[T]{
-		value: queue.front.value,
-	}
-
-	queueCopy.front = node
-	queueCopy.back = node
-
-	// Subsequent nodes
-	for n := queue.front.next; n != nil; n = n.next {
-		node := &queue_node[T]{
-			value: n.value,
-		}
-
-		queueCopy.back.next = node
-		queueCopy.back = node
-	}
-
-	return queueCopy
-}
-
 // NewLimitedLinkedQueue is a function that creates and returns a new instance of a
 // LimitedLinkedQueue.
 //
@@ -224,4 +192,40 @@ func NewLimitedLinkedQueue[T any](capacity int) (*LimitedLinkedQueue[T], error) 
 	return &LimitedLinkedQueue[T]{
 		capacity: capacity,
 	}, nil
+}
+
+// Copy is a method of the LimitedLinkedQueue type. It is used to create a shallow
+// copy of the queue.
+//
+// Returns:
+//   - *LimitedLinkedQueue[T]: A shallow copy of the queue.
+func (queue *LimitedLinkedQueue[T]) Copy() *LimitedLinkedQueue[T] {
+	queue_copy := &LimitedLinkedQueue[T]{
+		size:     queue.size,
+		capacity: queue.capacity,
+	}
+
+	if queue.size == 0 {
+		return queue_copy
+	}
+
+	// First node
+	node := &queue_node[T]{
+		value: queue.front.value,
+	}
+
+	queue_copy.front = node
+	queue_copy.back = node
+
+	// Subsequent nodes
+	for n := queue.front.next; n != nil; n = n.next {
+		node := &queue_node[T]{
+			value: n.value,
+		}
+
+		queue_copy.back.next = node
+		queue_copy.back = node
+	}
+
+	return queue_copy
 }
