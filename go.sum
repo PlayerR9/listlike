@@ -1,13 +1,3 @@
-github.com/PlayerR9/lib_units v0.1.1 h1:TsDMuiJzQ5p5ujql0GGpz3aDV0SuZdugAQlCZxs1fC4=
-github.com/PlayerR9/lib_units v0.1.1/go.mod h1:PtwiOBR5S2qAy5lD+Nz5ma7wXEYm8EWpVIP21Lm0o+Q=
-github.com/PlayerR9/lib_units v0.1.2 h1:WdKehiwvjRRevZTEhxxhYx0uA4ot3C3i/vWHc/Bt4b8=
-github.com/PlayerR9/lib_units v0.1.2/go.mod h1:PtwiOBR5S2qAy5lD+Nz5ma7wXEYm8EWpVIP21Lm0o+Q=
-github.com/PlayerR9/lib_units v0.1.3 h1:KbQjsXO2bdk0ET34XpsiAncmAVZK0TiO1whsOP4WRZc=
-github.com/PlayerR9/lib_units v0.1.3/go.mod h1:PtwiOBR5S2qAy5lD+Nz5ma7wXEYm8EWpVIP21Lm0o+Q=
-github.com/PlayerR9/lib_units v0.1.4 h1:u0F8BQy5EdJ4qwfqIpy1xUynSN/tz0oOrQc5f6altpw=
-github.com/PlayerR9/lib_units v0.1.4/go.mod h1:PtwiOBR5S2qAy5lD+Nz5ma7wXEYm8EWpVIP21Lm0o+Q=
-github.com/PlayerR9/lib_units v0.1.5 h1:QdXakT1EeFviit9/5LqQaGYUuG8debmzzIJgbwrnv5Y=
-github.com/PlayerR9/lib_units v0.1.5/go.mod h1:PtwiOBR5S2qAy5lD+Nz5ma7wXEYm8EWpVIP21Lm0o+Q=
 github.com/PlayerR9/lib_units v0.1.6 h1:nGV8cUY9K+AHpnGJwITNG8q8Ekg9DovhFij8JOxJXaE=
 github.com/PlayerR9/lib_units v0.1.6/go.mod h1:PtwiOBR5S2qAy5lD+Nz5ma7wXEYm8EWpVIP21Lm0o+Q=
 golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 h1:2dVuKD2vS7b0QIHQbpyTISPd0LeHDbnYEryqj5Q1ug8=

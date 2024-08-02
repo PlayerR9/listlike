@@ -230,9 +230,8 @@ func (stack *LimitedLinkedStack[T]) Slice() []T {
 // of the stack.
 //
 // Returns:
-//
-//   - uc.Copier: A copy of the stack.
-func (stack *LimitedLinkedStack[T]) Copy() uc.Copier {
+//   - *LimitedLinkedStack[T]: A copy of the stack.
+func (stack *LimitedLinkedStack[T]) Copy() *LimitedLinkedStack[T] {
 	stackCopy := &LimitedLinkedStack[T]{
 		size:     stack.size,
 		capacity: stack.capacity,

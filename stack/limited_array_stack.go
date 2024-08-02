@@ -186,9 +186,8 @@ func (stack *LimitedArrayStack[T]) Slice() []T {
 // of the stack.
 //
 // Returns:
-//
-//   - uc.Copier: A copy of the stack.
-func (stack *LimitedArrayStack[T]) Copy() uc.Copier {
+//   - *LimitedArrayStack[T]: A copy of the stack.
+func (stack *LimitedArrayStack[T]) Copy() *LimitedArrayStack[T] {
 	stackCopy := &LimitedArrayStack[T]{
 		values:   make([]T, len(stack.values)),
 		capacity: stack.capacity,
