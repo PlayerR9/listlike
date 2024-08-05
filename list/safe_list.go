@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 
+	gcstr "github.com/PlayerR9/go-commons/strings"
 	uc "github.com/PlayerR9/lib_units/common"
-	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // SafeList is a generic type that represents a thread-safe list data
@@ -244,7 +244,7 @@ func (list *SafeList[T]) GoString() string {
 
 	values := make([]string, 0, list.size)
 	for node := list.front; node != nil; node = node.Next() {
-		values = append(values, lustr.GoStringOf(node.Value))
+		values = append(values, gcstr.GoStringOf(node.Value))
 	}
 
 	var builder strings.Builder

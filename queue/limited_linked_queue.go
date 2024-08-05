@@ -4,8 +4,9 @@ import (
 	"strconv"
 	"strings"
 
+	gcers "github.com/PlayerR9/go-commons/errors"
+	gcstr "github.com/PlayerR9/go-commons/strings"
 	uc "github.com/PlayerR9/lib_units/common"
-	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // LimitedLinkedQueue is a generic type that represents a queue data structure with
@@ -147,7 +148,7 @@ func (queue *LimitedLinkedQueue[T]) IsFull() bool {
 func (queue *LimitedLinkedQueue[T]) GoString() string {
 	values := make([]string, 0, queue.size)
 	for queue_node := queue.front; queue_node != nil; queue_node = queue_node.next {
-		values = append(values, lustr.GoStringOf(queue_node.value))
+		values = append(values, gcstr.GoStringOf(queue_node.value))
 	}
 
 	var builder strings.Builder
@@ -186,7 +187,7 @@ func (queue *LimitedLinkedQueue[T]) Slice() []T {
 //     than 0.
 func NewLimitedLinkedQueue[T any](capacity int) (*LimitedLinkedQueue[T], error) {
 	if capacity < 0 {
-		return nil, uc.NewErrInvalidParameter("capacity", uc.NewErrGTE(0))
+		return nil, gcers.NewErrInvalidParameter("capacity", uc.NewErrGTE(0))
 	}
 
 	return &LimitedLinkedQueue[T]{

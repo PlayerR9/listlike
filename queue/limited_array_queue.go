@@ -4,8 +4,9 @@ import (
 	"strconv"
 	"strings"
 
+	gcers "github.com/PlayerR9/go-commons/errors"
+	gcstr "github.com/PlayerR9/go-commons/strings"
 	uc "github.com/PlayerR9/lib_units/common"
-	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // LimitedArrayQueue is a generic type that represents a queue data structure with
@@ -99,7 +100,7 @@ func (queue *LimitedArrayQueue[T]) IsFull() bool {
 func (queue *LimitedArrayQueue[T]) GoString() string {
 	values := make([]string, 0, len(queue.values))
 	for _, value := range queue.values {
-		values = append(values, lustr.GoStringOf(value))
+		values = append(values, gcstr.GoStringOf(value))
 	}
 
 	var builder strings.Builder
@@ -135,7 +136,7 @@ func (queue *LimitedArrayQueue[T]) Slice() []T {
 //     than 0.
 func NewLimitedArrayQueue[T any](capacity int) (*LimitedArrayQueue[T], error) {
 	if capacity < 0 {
-		return nil, uc.NewErrInvalidParameter("capacity", uc.NewErrGTE(0))
+		return nil, gcers.NewErrInvalidParameter("capacity", uc.NewErrGTE(0))
 	}
 
 	return &LimitedArrayQueue[T]{

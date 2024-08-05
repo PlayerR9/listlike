@@ -5,8 +5,9 @@ import (
 	"strings"
 	"sync"
 
+	gcers "github.com/PlayerR9/go-commons/errors"
+	gcstr "github.com/PlayerR9/go-commons/strings"
 	uc "github.com/PlayerR9/lib_units/common"
-	lustr "github.com/PlayerR9/lib_units/strings"
 )
 
 // LimitedSafeQueue is a generic type that represents a thread-safe queue data
@@ -197,7 +198,7 @@ func (queue *LimitedSafeQueue[T]) GoString() string {
 
 	values := make([]string, 0, queue.size)
 	for node := queue.front; node != nil; node = node.next {
-		values = append(values, lustr.GoStringOf(node.value))
+		values = append(values, gcstr.GoStringOf(node.value))
 	}
 
 	var builder strings.Builder
@@ -240,7 +241,7 @@ func (queue *LimitedSafeQueue[T]) Slice() []T {
 //   - *LimitedSafeQueue[T]: A pointer to the newly created LimitedSafeQueue.
 func NewLimitedSafeQueue[T any](capacity int) (*LimitedSafeQueue[T], error) {
 	if capacity < 0 {
-		return nil, uc.NewErrInvalidParameter("capacity", uc.NewErrGTE(0))
+		return nil, gcers.NewErrInvalidParameter("capacity", uc.NewErrGTE(0))
 	}
 
 	return &LimitedSafeQueue[T]{

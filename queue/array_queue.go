@@ -5,7 +5,8 @@ import (
 	"strings"
 
 	uc "github.com/PlayerR9/lib_units/common"
-	lustr "github.com/PlayerR9/lib_units/strings"
+
+	gcstr "github.com/PlayerR9/go-commons/strings"
 )
 
 // ArrayQueue is a generic type that represents a queue data structure with
@@ -81,7 +82,7 @@ func (queue *ArrayQueue[T]) Clear() {
 func (queue *ArrayQueue[T]) GoString() string {
 	values := make([]string, 0, len(queue.values))
 	for _, value := range queue.values {
-		values = append(values, lustr.GoStringOf(value))
+		values = append(values, gcstr.GoStringOf(value))
 	}
 
 	var builder strings.Builder
