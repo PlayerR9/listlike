@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	uc "github.com/PlayerR9/lib_units/common"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // LimitedLinkedList is a generic type that represents a list data structure with
@@ -151,8 +151,8 @@ func (list *LimitedLinkedList[T]) Capacity() int {
 // Returns:
 //
 //   - uc.Iterater[T]: An iterator for the list.
-func (list *LimitedLinkedList[T]) Iterator() uc.Iterater[T] {
-	var builder uc.Builder[T]
+func (list *LimitedLinkedList[T]) Iterator() itrs.Iterater[T] {
+	var builder itrs.Builder[T]
 
 	for list_node := list.front; list_node != nil; list_node = list_node.Next() {
 		builder.Add(list_node.Value)

@@ -5,9 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	uc "github.com/PlayerR9/lib_units/common"
-
 	gcstr "github.com/PlayerR9/go-commons/strings"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // ArrayStack is a generic type that represents a stack data structure with
@@ -104,8 +103,8 @@ func (stack *ArrayStack[T]) Size() int {
 // Returns:
 //
 //   - uc.Iterater[T]: An iterator that iterates over the elements in the stack.
-func (stack *ArrayStack[T]) Iterator() uc.Iterater[T] {
-	var builder uc.Builder[T]
+func (stack *ArrayStack[T]) Iterator() itrs.Iterater[T] {
+	var builder itrs.Builder[T]
 
 	for i := len(stack.values) - 1; i >= 0; i-- {
 		builder.Add(stack.values[i])

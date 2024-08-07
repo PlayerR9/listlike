@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	gcstr "github.com/PlayerR9/go-commons/strings"
-	uc "github.com/PlayerR9/lib_units/common"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // SafeList is a generic type that represents a thread-safe list data
@@ -176,14 +176,14 @@ func (list *SafeList[T]) Capacity() int {
 // Returns:
 //
 //   - uc.Iterater[T]: An iterator for the list.
-func (list *SafeList[T]) Iterator() uc.Iterater[T] {
+func (list *SafeList[T]) Iterator() itrs.Iterater[T] {
 	list.frontMutex.RLock()
 	defer list.frontMutex.RUnlock()
 
 	list.backMutex.RLock()
 	defer list.backMutex.RUnlock()
 
-	var builder uc.Builder[T]
+	var builder itrs.Builder[T]
 
 	for node := list.front; node != nil; node = node.Next() {
 		builder.Add(node.Value)

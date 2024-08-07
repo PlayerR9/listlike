@@ -3,7 +3,7 @@ package list
 import (
 	"fmt"
 
-	uc "github.com/PlayerR9/lib_units/common"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // Lister is an interface that defines methods for a list data structure.
@@ -95,7 +95,11 @@ type Lister[T any] interface {
 	//  	- []T: A slice of the elements in the list.
 	Slice() []T
 
-	uc.Iterable[T]
+	// Iterator is a method that returns an iterator for the list.
+	//
+	// Returns:
+	//  	- itrs.Iterater[T]: An iterator for the list.
+	Iterator() itrs.Iterater[T]
 
 	fmt.GoStringer
 }

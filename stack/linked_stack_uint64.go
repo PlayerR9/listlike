@@ -2,7 +2,7 @@
 package stack
 
 import (
-	"github.com/PlayerR9/lib_units/common"
+	"github.com/PlayerR9/iterators/simple"
 	"strconv"
 	"strings"
 )
@@ -115,8 +115,8 @@ func (s *Uint64Stack) Size() int {
 }
 
 // Iterator implements the stack.Stacker interface.
-func (s *Uint64Stack) Iterator() common.Iterater[uint64] {
-	var builder common.Builder[uint64]
+func (s *Uint64Stack) Iterator() simple.Iterater[uint64] {
+	var builder simple.Builder[uint64]
 
 	for node := s.front; node != nil; node = node.next {
 		builder.Add(node.value)

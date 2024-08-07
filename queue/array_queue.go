@@ -4,9 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	uc "github.com/PlayerR9/lib_units/common"
-
 	gcstr "github.com/PlayerR9/go-commons/strings"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // ArrayQueue is a generic type that represents a queue data structure with
@@ -69,8 +68,8 @@ func (queue *ArrayQueue[T]) Size() int {
 }
 
 // Iterator implements the Queuer interface.
-func (queue *ArrayQueue[T]) Iterator() uc.Iterater[T] {
-	return uc.NewSimpleIterator(queue.values)
+func (queue *ArrayQueue[T]) Iterator() itrs.Iterater[T] {
+	return itrs.NewSimpleIterator(queue.values)
 }
 
 // Clear implements the Queuer interface.

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	gcstr "github.com/PlayerR9/go-commons/strings"
-	uc "github.com/PlayerR9/lib_units/common"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // LinkedQueue is a generic type that represents a queue data structure with
@@ -97,8 +97,8 @@ func (queue *LinkedQueue[T]) Size() int {
 }
 
 // Iterator implements the Queuer interface.
-func (queue *LinkedQueue[T]) Iterator() uc.Iterater[T] {
-	var builder uc.Builder[T]
+func (queue *LinkedQueue[T]) Iterator() itrs.Iterater[T] {
+	var builder itrs.Builder[T]
 
 	for queue_node := queue.front; queue_node != nil; queue_node = queue_node.next {
 		builder.Add(queue_node.value)

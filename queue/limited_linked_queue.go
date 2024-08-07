@@ -5,8 +5,9 @@ import (
 	"strings"
 
 	gcers "github.com/PlayerR9/go-commons/errors"
+	gcint "github.com/PlayerR9/go-commons/ints"
 	gcstr "github.com/PlayerR9/go-commons/strings"
-	uc "github.com/PlayerR9/lib_units/common"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // LimitedLinkedQueue is a generic type that represents a queue data structure with
@@ -106,8 +107,8 @@ func (queue *LimitedLinkedQueue[T]) Capacity() int {
 }
 
 // Iterator implements the Queuer interface.
-func (queue *LimitedLinkedQueue[T]) Iterator() uc.Iterater[T] {
-	var builder uc.Builder[T]
+func (queue *LimitedLinkedQueue[T]) Iterator() itrs.Iterater[T] {
+	var builder itrs.Builder[T]
 
 	for queue_node := queue.front; queue_node != nil; queue_node = queue_node.next {
 		builder.Add(queue_node.value)
@@ -187,7 +188,7 @@ func (queue *LimitedLinkedQueue[T]) Slice() []T {
 //     than 0.
 func NewLimitedLinkedQueue[T any](capacity int) (*LimitedLinkedQueue[T], error) {
 	if capacity < 0 {
-		return nil, gcers.NewErrInvalidParameter("capacity", uc.NewErrGTE(0))
+		return nil, gcers.NewErrInvalidParameter("capacity", gcint.NewErrGTE(0))
 	}
 
 	return &LimitedLinkedQueue[T]{

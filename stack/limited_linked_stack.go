@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	gcstr "github.com/PlayerR9/go-commons/strings"
-	uc "github.com/PlayerR9/lib_units/common"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // LimitedLinkedStack is a generic type that represents a stack data structure with
@@ -147,8 +147,8 @@ func (stack *LimitedLinkedStack[T]) Capacity() int {
 // Returns:
 //
 //   - uc.Iterater[T]: An iterator for the elements in the stack.
-func (stack *LimitedLinkedStack[T]) Iterator() uc.Iterater[T] {
-	var builder uc.Builder[T]
+func (stack *LimitedLinkedStack[T]) Iterator() itrs.Iterater[T] {
+	var builder itrs.Builder[T]
 
 	for stack_node := stack.front; stack_node != nil; stack_node = stack_node.Next() {
 		builder.Add(stack_node.Value)

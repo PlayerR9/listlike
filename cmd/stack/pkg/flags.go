@@ -4,18 +4,24 @@ import (
 	"errors"
 	"flag"
 
-	ggen "github.com/PlayerR9/lib_units/generator"
+	ggen "github.com/PlayerR9/go-generator/generator"
 )
 
 var (
+	OutputLocFlag *ggen.OutputLocVal
+
+	TypeListFlag *ggen.TypeListVal
+
+	GenericsFlag *ggen.GenericsSignVal
+
 	// TypeName is the name of the linked stack.
 	TypeName *string
 )
 
 func init() {
-	ggen.SetOutputFlag("<type>__linkedstack.go", false)
-	ggen.SetTypeListFlag("type", true, 1, "The data type of the linked stack.")
-	ggen.SetGenericsSignFlag("g", false, 1)
+	OutputLocFlag = ggen.NewOutputFlag("<type>__linkedstack.go", false)
+	TypeListFlag = ggen.NewTypeListFlag("type", true, 1, "The data type of the linked stack.")
+	GenericsFlag = ggen.NewGenericsSignFlag("g", false, 1)
 
 	TypeName = flag.String("name", "", "the name of the linked stack. Must be a valid Go identifier. If not set, "+
 		"the default name of 'Linked<DataType>Stack' will be used instead.")
@@ -28,7 +34,7 @@ func fix_type_name(data_type string) (string, error) {
 
 	type_name := *TypeName
 	if type_name != "" {
-		err := ggen.IsValidName(type_name, nil, ggen.Exported)
+		err := ggen.IsValidVariableName(type_name, nil, ggen.Exported)
 		if err != nil {
 			return "", err
 		}
@@ -47,12 +53,14 @@ func fix_type_name(data_type string) (string, error) {
 }
 
 func ParseFlags() (string, string, error) {
-	err := ggen.ParseFlags()
+	ggen.ParseFlags()
+
+	err := ggen.AlignGenerics(GenericsFlag, TypeListFlag)
 	if err != nil {
 		return "", "", err
 	}
 
-	data_type, err := ggen.TypeListFlag.Type(0)
+	data_type, err := TypeListFlag.Type(0)
 	if err != nil {
 		return "", "", err
 	}

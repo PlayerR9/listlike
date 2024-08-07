@@ -5,8 +5,9 @@ import (
 	"strings"
 
 	gcers "github.com/PlayerR9/go-commons/errors"
+	gcint "github.com/PlayerR9/go-commons/ints"
 	gcstr "github.com/PlayerR9/go-commons/strings"
-	uc "github.com/PlayerR9/lib_units/common"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // LimitedArrayQueue is a generic type that represents a queue data structure with
@@ -82,8 +83,8 @@ func (queue *LimitedArrayQueue[T]) Capacity() int {
 }
 
 // Iterator implements the Queuer interface.
-func (queue *LimitedArrayQueue[T]) Iterator() uc.Iterater[T] {
-	return uc.NewSimpleIterator(queue.values)
+func (queue *LimitedArrayQueue[T]) Iterator() itrs.Iterater[T] {
+	return itrs.NewSimpleIterator(queue.values)
 }
 
 // Clear implements the Queuer interface.
@@ -136,7 +137,7 @@ func (queue *LimitedArrayQueue[T]) Slice() []T {
 //     than 0.
 func NewLimitedArrayQueue[T any](capacity int) (*LimitedArrayQueue[T], error) {
 	if capacity < 0 {
-		return nil, gcers.NewErrInvalidParameter("capacity", uc.NewErrGTE(0))
+		return nil, gcers.NewErrInvalidParameter("capacity", gcint.NewErrGTE(0))
 	}
 
 	return &LimitedArrayQueue[T]{

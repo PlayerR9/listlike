@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	ggen "github.com/PlayerR9/lib_units/generator"
+	ggen "github.com/PlayerR9/go-generator/generator"
 )
 
 var (
@@ -14,7 +14,7 @@ var (
 )
 
 func init() {
-	Logger = ggen.InitLogger(os.Stdout, "linked stack")
+	Logger = log.New(os.Stdout, "[linked stack]: ", log.LstdFlags)
 }
 
 type GenData struct {
@@ -47,7 +47,7 @@ func init() {
 	}
 
 	tmp.AddDoFunc(func(t *GenData) error {
-		sig, err := ggen.MakeTypeSig(t.TypeName, "")
+		sig, err := ggen.MakeTypeSign(GenericsFlag, t.TypeName, "")
 		if err != nil {
 			return err
 		}
@@ -60,7 +60,7 @@ func init() {
 	tmp.AddDoFunc(func(gd *GenData) error {
 		data_type := strings.TrimPrefix(gd.DataType, "*")
 
-		sig, err := ggen.MakeTypeSig("stack_node_", data_type)
+		sig, err := ggen.MakeTypeSign(GenericsFlag, "stack_node_", data_type)
 		if err != nil {
 			return err
 		}
@@ -79,11 +79,11 @@ func init() {
 	})
 
 	tmp.AddDoFunc(func(gd *GenData) error {
-		f_call, deps := ggen.GetStringFunctionCall("node.value", gd.DataType, nil)
+		f_call, deps := ggen.GetStringFnCall("node.value", gd.DataType, nil)
 
 		gd.StringFunc = f_call
 
-		deps = append(deps, "strconv", "strings", "github.com/PlayerR9/lib_units/common")
+		deps = append(deps, "strconv", "strings", "github.com/PlayerR9/iterators/simple")
 
 		gd.Dependencies = ggen.GetPackages(deps)
 
@@ -209,8 +209,8 @@ func (s *{{ .TypeSig }}) Size() int {
 }
 
 // Iterator implements the stack.Stacker interface.
-func (s *{{ .TypeSig }}) Iterator() common.Iterater[{{ .DataType }}] {
-	var builder common.Builder[{{ .DataType }}]
+func (s *{{ .TypeSig }}) Iterator() simple.Iterater[{{ .DataType }}] {
+	var builder simple.Builder[{{ .DataType }}]
 
 	for node := s.front; node != nil; node = node.next {
 		builder.Add(node.value)

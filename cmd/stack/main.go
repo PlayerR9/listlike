@@ -57,7 +57,7 @@
 package main
 
 import (
-	ggen "github.com/PlayerR9/lib_units/generator"
+	ggen "github.com/PlayerR9/go-generator/generator"
 	pkg "github.com/PlayerR9/listlike/cmd/stack/pkg"
 )
 
@@ -70,19 +70,19 @@ func main() {
 	g := &pkg.GenData{
 		DataType:  data_type,
 		TypeName:  type_name,
-		Generics:  ggen.GenericsSigFlag.String(),
+		Generics:  pkg.GenericsFlag.String(),
 		ZeroValue: ggen.ZeroValueOf(data_type, nil),
 	}
 
-	dest, err := pkg.Generator.Generate(type_name, "_linkedstack.go", g)
+	res, err := pkg.Generator.Generate(pkg.OutputLocFlag, type_name+"_linkedstack.go", g)
 	if err != nil {
 		pkg.Logger.Fatalf("Could not generate code: %s", err.Error())
 	}
 
-	err = dest.WriteFile()
+	dest, err := res.WriteFile("")
 	if err != nil {
 		pkg.Logger.Fatal(err.Error())
-	} else {
-		pkg.Logger.Printf("Successfully generated: %q", dest.DestLoc)
 	}
+
+	pkg.Logger.Printf("Successfully generated: %q", dest)
 }

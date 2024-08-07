@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	gcstr "github.com/PlayerR9/go-commons/strings"
-	uc "github.com/PlayerR9/lib_units/common"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // LimitedArrayStack is a generic type that represents a stack data structure with
@@ -123,8 +123,8 @@ func (stack *LimitedArrayStack[T]) Capacity() int {
 // Returns:
 //
 //   - uc.Iterater[T]: An iterator that iterates over the elements in the stack.
-func (stack *LimitedArrayStack[T]) Iterator() uc.Iterater[T] {
-	var builder uc.Builder[T]
+func (stack *LimitedArrayStack[T]) Iterator() itrs.Iterater[T] {
+	var builder itrs.Builder[T]
 
 	for i := len(stack.values) - 1; i >= 0; i-- {
 		builder.Add(stack.values[i])

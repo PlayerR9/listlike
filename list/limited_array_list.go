@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	uc "github.com/PlayerR9/lib_units/common"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // LimitedArrayList is a generic type that represents a list data structure with
@@ -114,8 +114,8 @@ func (list *LimitedArrayList[T]) Capacity() int {
 // Returns:
 //
 //   - uc.Iterater[T]: An iterator for the list.
-func (list *LimitedArrayList[T]) Iterator() uc.Iterater[T] {
-	return uc.NewSimpleIterator(list.values)
+func (list *LimitedArrayList[T]) Iterator() itrs.Iterater[T] {
+	return itrs.NewSimpleIterator(list.values)
 }
 
 // Clear is a method of the LimitedArrayList type. It is used to remove all elements from

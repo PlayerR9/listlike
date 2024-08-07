@@ -6,8 +6,9 @@ import (
 	"sync"
 
 	gcers "github.com/PlayerR9/go-commons/errors"
+	gcint "github.com/PlayerR9/go-commons/ints"
 	gcstr "github.com/PlayerR9/go-commons/strings"
-	uc "github.com/PlayerR9/lib_units/common"
+	itrs "github.com/PlayerR9/iterators/simple"
 )
 
 // LimitedSafeQueue is a generic type that represents a thread-safe queue data
@@ -135,14 +136,14 @@ func (queue *LimitedSafeQueue[T]) Capacity() int {
 }
 
 // Iterator implements the Queuer interface.
-func (queue *LimitedSafeQueue[T]) Iterator() uc.Iterater[T] {
+func (queue *LimitedSafeQueue[T]) Iterator() itrs.Iterater[T] {
 	queue.frontMutex.RLock()
 	defer queue.frontMutex.RUnlock()
 
 	queue.backMutex.RLock()
 	defer queue.backMutex.RUnlock()
 
-	var builder uc.Builder[T]
+	var builder itrs.Builder[T]
 
 	for node := queue.front; node != nil; node = node.next {
 		builder.Add(node.value)
@@ -241,7 +242,7 @@ func (queue *LimitedSafeQueue[T]) Slice() []T {
 //   - *LimitedSafeQueue[T]: A pointer to the newly created LimitedSafeQueue.
 func NewLimitedSafeQueue[T any](capacity int) (*LimitedSafeQueue[T], error) {
 	if capacity < 0 {
-		return nil, gcers.NewErrInvalidParameter("capacity", uc.NewErrGTE(0))
+		return nil, gcers.NewErrInvalidParameter("capacity", gcint.NewErrGTE(0))
 	}
 
 	return &LimitedSafeQueue[T]{
