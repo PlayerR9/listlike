@@ -27,6 +27,46 @@ type LimitedSafeList[T any] struct {
 	capacity int
 }
 
+// NewSafeList is a function that creates and returns a new instance of a
+// SafeList.
+//
+// Parameters:
+//
+//   - values: A variadic parameter of type T, which represents the initial values to
+//     be stored in the list.
+//
+// Returns:
+//
+//   - *SafeList[T]: A pointer to the newly created SafeList.
+func NewSafeList[T any](values ...T) *LimitedSafeList[T] {
+	list := &LimitedSafeList[T]{
+		capacity: -1,
+	}
+
+	if len(values) == 0 {
+		return list
+	}
+
+	list.size = len(values)
+
+	// First node
+	list_node := NewListSafeNode(values[0])
+
+	list.front = list_node
+	list.back = list_node
+
+	// Subsequent nodes
+	for _, element := range values {
+		list_node := NewListSafeNode(element)
+		list_node.SetPrev(list.back)
+
+		list.back.SetNext(list_node)
+		list.back = list_node
+	}
+
+	return list
+}
+
 // NewLimitedSafeList is a function that creates and returns a new instance of a
 // LimitedSafeList.
 //
@@ -38,8 +78,14 @@ type LimitedSafeList[T any] struct {
 // Returns:
 //
 //   - *LimitedSafeList[T]: A pointer to the newly created LimitedSafeList.
-func NewLimitedSafeList[T any](values ...T) *LimitedSafeList[T] {
-	list := new(LimitedSafeList[T])
+func NewLimitedSafeList[T any](capacity int, values ...T) *LimitedSafeList[T] {
+	if capacity < 0 {
+		capacity *= -1
+	}
+
+	list := &LimitedSafeList[T]{
+		capacity: capacity,
+	}
 
 	if len(values) == 0 {
 		return list
@@ -71,7 +117,7 @@ func (list *LimitedSafeList[T]) Append(value T) bool {
 	list.backMutex.Lock()
 	defer list.backMutex.Unlock()
 
-	if list.size >= list.capacity {
+	if list.capacity != -1 && list.size >= list.capacity {
 		return false
 	}
 
@@ -237,7 +283,7 @@ func (list *LimitedSafeList[T]) Clear() {
 //
 //   - isFull: A boolean value that is true if the list is full, and false otherwise.
 func (list *LimitedSafeList[T]) IsFull() (isFull bool) {
-	return list.capacity <= list.size
+	return list.capacity != -1 && list.size >= list.capacity
 }
 
 // GoString implements the fmt.GoStringer interface.
