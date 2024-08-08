@@ -2,9 +2,19 @@ package list
 
 import (
 	"fmt"
-
-	itrs "github.com/PlayerR9/iterators/simple"
 )
+
+type Iterater[T any] interface {
+	// Consume is a method that consumes the next value from the list and returns it.
+	//
+	// Returns:
+	//   - T: The value of type T that was consumed.
+	//   - error: An error of type io.EOF if the iterator has reached the end of the list.
+	Consume() (T, error)
+
+	// Restart is a method that resets the iterator to the beginning of the list.
+	Restart()
+}
 
 // Lister is an interface that defines methods for a list data structure.
 type Lister[T any] interface {
@@ -94,12 +104,6 @@ type Lister[T any] interface {
 	// Returns:
 	//  	- []T: A slice of the elements in the list.
 	Slice() []T
-
-	// Iterator is a method that returns an iterator for the list.
-	//
-	// Returns:
-	//  	- itrs.Iterater[T]: An iterator for the list.
-	Iterator() itrs.Iterater[T]
 
 	fmt.GoStringer
 }

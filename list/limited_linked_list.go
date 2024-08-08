@@ -2,15 +2,41 @@ package list
 
 import (
 	"fmt"
+	"io"
 	"strconv"
 	"strings"
-
-	itrs "github.com/PlayerR9/iterators/simple"
 )
 
-// LimitedLinkedList is a generic type that represents a list data structure with
+// ListIterator is the iterator for the Lister interface.
+type ListIterator[T any] struct {
+	// head is a pointer to the head of the list.
+	head *ListNode[T]
+
+	// current is a pointer to the current node in the list.
+	current *ListNode[T]
+}
+
+// Consume implements the Iterater interface.
+func (it *ListIterator[T]) Consume() (T, error) {
+	n := it.current
+
+	if n == nil {
+		return *new(T), io.EOF
+	}
+
+	it.current = it.current.next
+
+	return n.Value, nil
+}
+
+// Restart implements the Iterater interface.
+func (it *ListIterator[T]) Restart() {
+	it.current = it.head
+}
+
+// LinkedList is a generic type that represents a list data structure with
 // or without a limited capacity, implemented using a linked list.
-type LimitedLinkedList[T any] struct {
+type LinkedList[T any] struct {
 	// front and back are pointers to the first and last nodes in the linked list,
 	// respectively.
 	front, back *ListNode[T]
@@ -20,6 +46,44 @@ type LimitedLinkedList[T any] struct {
 
 	// capacity is the maximum number of elements the list can hold.
 	capacity int
+}
+
+// NewLinkedList is a function that creates and returns a new instance of a
+// LinkedList.
+//
+// Parameters:
+//   - values: A variadic parameter of type T, which represents the initial values to
+//     be stored in the list.
+//
+// Returns:
+//   - *LinkedList[T]: A pointer to the newly created LinkedList.
+func NewLinkedList[T any](values ...T) *LinkedList[T] {
+	list := &LinkedList[T]{
+		capacity: -1,
+	}
+
+	if len(values) == 0 {
+		return list
+	}
+
+	list.size = len(values)
+
+	// First node
+	list_node := NewListNode(values[0])
+
+	list.front = list_node
+	list.back = list_node
+
+	// Subsequent nodes
+	for _, element := range values {
+		list_node := NewListNode(element)
+		list_node.SetPrev(list.back)
+
+		list.back.SetNext(list_node)
+		list.back = list_node
+	}
+
+	return list
 }
 
 // NewLimitedLinkedList is a function that creates and returns a new instance of a
@@ -33,8 +97,14 @@ type LimitedLinkedList[T any] struct {
 // Returns:
 //
 //   - *LimitedLinkedList[T]: A pointer to the newly created LimitedLinkedList.
-func NewLimitedLinkedList[T any](values ...T) *LimitedLinkedList[T] {
-	list := new(LimitedLinkedList[T])
+func NewLimitedLinkedList[T any](capacity int, values ...T) *LinkedList[T] {
+	if capacity < 0 {
+		capacity *= -1
+	}
+
+	list := &LinkedList[T]{
+		capacity: capacity,
+	}
 
 	if len(values) == 0 {
 		return list
@@ -62,8 +132,8 @@ func NewLimitedLinkedList[T any](values ...T) *LimitedLinkedList[T] {
 }
 
 // Append implements the Lister interface.
-func (list *LimitedLinkedList[T]) Append(value T) bool {
-	if list.size >= list.capacity {
+func (list *LinkedList[T]) Append(value T) bool {
+	if list.capacity != -1 && list.size >= list.capacity {
 		return false
 	}
 
@@ -84,7 +154,7 @@ func (list *LimitedLinkedList[T]) Append(value T) bool {
 }
 
 // DeleteFirst implements the Lister interface.
-func (list *LimitedLinkedList[T]) DeleteFirst() (T, bool) {
+func (list *LinkedList[T]) DeleteFirst() (T, bool) {
 	if list.front == nil {
 		return *new(T), false
 	}
@@ -106,7 +176,7 @@ func (list *LimitedLinkedList[T]) DeleteFirst() (T, bool) {
 }
 
 // PeekFirst implements the Lister interface.
-func (list *LimitedLinkedList[T]) PeekFirst() (T, bool) {
+func (list *LinkedList[T]) PeekFirst() (T, bool) {
 	if list.front == nil {
 		return *new(T), false
 	}
@@ -120,7 +190,7 @@ func (list *LimitedLinkedList[T]) PeekFirst() (T, bool) {
 // Returns:
 //
 //   - bool: A boolean value that is true if the list is empty, and false otherwise.
-func (list *LimitedLinkedList[T]) IsEmpty() bool {
+func (list *LinkedList[T]) IsEmpty() bool {
 	return list.front == nil
 }
 
@@ -130,7 +200,7 @@ func (list *LimitedLinkedList[T]) IsEmpty() bool {
 // Returns:
 //
 //   - int: An integer that represents the current number of elements in the list.
-func (list *LimitedLinkedList[T]) Size() int {
+func (list *LinkedList[T]) Size() int {
 	return list.size
 }
 
@@ -141,7 +211,7 @@ func (list *LimitedLinkedList[T]) Size() int {
 //
 //   - optional.Int: An optional integer that represents the maximum number of elements
 //     the list can hold.
-func (list *LimitedLinkedList[T]) Capacity() int {
+func (list *LinkedList[T]) Capacity() int {
 	return list.capacity
 }
 
@@ -149,21 +219,17 @@ func (list *LimitedLinkedList[T]) Capacity() int {
 // for the list.
 //
 // Returns:
-//
-//   - uc.Iterater[T]: An iterator for the list.
-func (list *LimitedLinkedList[T]) Iterator() itrs.Iterater[T] {
-	var builder itrs.Builder[T]
-
-	for list_node := list.front; list_node != nil; list_node = list_node.Next() {
-		builder.Add(list_node.Value)
+//   - *ListerIterator[T]: An iterator for the list.
+func (list *LinkedList[T]) Iterator() *ListIterator[T] {
+	return &ListIterator[T]{
+		head:    list.front,
+		current: list.front,
 	}
-
-	return builder.Build()
 }
 
 // Clear is a method of the LimitedLinkedList type. It is used to remove all elements from
 // the list.
-func (list *LimitedLinkedList[T]) Clear() {
+func (list *LinkedList[T]) Clear() {
 	if list.front == nil {
 		return // List is already empty
 	}
@@ -193,12 +259,12 @@ func (list *LimitedLinkedList[T]) Clear() {
 // Returns:
 //
 //   - isFull: A boolean value that is true if the list is full, and false otherwise.
-func (list *LimitedLinkedList[T]) IsFull() bool {
-	return list.size >= list.capacity
+func (list *LinkedList[T]) IsFull() bool {
+	return list.capacity != -1 && list.size >= list.capacity
 }
 
 // GoString implements the fmt.GoStringer interface.
-func (list *LimitedLinkedList[T]) GoString() string {
+func (list *LinkedList[T]) GoString() string {
 	values := make([]string, 0, list.size)
 
 	for list_node := list.front; list_node != nil; list_node = list_node.Next() {
@@ -207,9 +273,16 @@ func (list *LimitedLinkedList[T]) GoString() string {
 
 	var builder strings.Builder
 
-	builder.WriteString("LimitedLinkedList[capacity=")
-	builder.WriteString(strconv.Itoa(list.capacity))
-	builder.WriteString(", size=")
+	builder.WriteString("LimitedLinkedList[")
+
+	if list.capacity == -1 {
+		builder.WriteString("size=")
+	} else {
+		builder.WriteString("capacity=")
+		builder.WriteString(strconv.Itoa(list.capacity))
+		builder.WriteString(", size=")
+	}
+
 	builder.WriteString(strconv.Itoa(list.size))
 	builder.WriteString(", values=[")
 	builder.WriteString(strings.Join(values, ", "))
@@ -219,8 +292,8 @@ func (list *LimitedLinkedList[T]) GoString() string {
 }
 
 // Prepend implements the Lister interface.
-func (list *LimitedLinkedList[T]) Prepend(value T) bool {
-	if list.size >= list.capacity {
+func (list *LinkedList[T]) Prepend(value T) bool {
+	if list.capacity != -1 && list.size >= list.capacity {
 		return false
 	}
 
@@ -241,7 +314,7 @@ func (list *LimitedLinkedList[T]) Prepend(value T) bool {
 }
 
 // DeleteLast implements the Lister interface.
-func (list *LimitedLinkedList[T]) DeleteLast() (T, bool) {
+func (list *LinkedList[T]) DeleteLast() (T, bool) {
 	if list.front == nil {
 		return *new(T), false
 	}
@@ -263,7 +336,7 @@ func (list *LimitedLinkedList[T]) DeleteLast() (T, bool) {
 }
 
 // PeekLast implements the Lister interface.
-func (list *LimitedLinkedList[T]) PeekLast() (T, bool) {
+func (list *LinkedList[T]) PeekLast() (T, bool) {
 	if list.front == nil {
 		return *new(T), false
 	}
@@ -276,7 +349,7 @@ func (list *LimitedLinkedList[T]) PeekLast() (T, bool) {
 // Returns:
 //
 //   - []T: A slice of type T.
-func (list *LimitedLinkedList[T]) Slice() []T {
+func (list *LinkedList[T]) Slice() []T {
 	slice := make([]T, 0, list.size)
 
 	for list_node := list.front; list_node != nil; list_node = list_node.Next() {
@@ -291,8 +364,8 @@ func (list *LimitedLinkedList[T]) Slice() []T {
 //
 // Returns:
 //   - *LimitedLinkedList[T]: A copy of the list.
-func (list *LimitedLinkedList[T]) Copy() *LimitedLinkedList[T] {
-	list_copy := &LimitedLinkedList[T]{
+func (list *LinkedList[T]) Copy() *LinkedList[T] {
+	list_copy := &LinkedList[T]{
 		size:     list.size,
 		capacity: list.capacity,
 	}
